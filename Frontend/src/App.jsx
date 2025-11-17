@@ -10,6 +10,7 @@ import Contact from "./components/Contact";
 import AddBook from "./components/AddBook";
 import Login from "./components/Login";
 import BookDetail from "./components/BookDetail";
+import Wishlist from "./components/Wishlist";
 
 function App() {
   const [authUser, setAuthUser] = useAuth();
@@ -37,6 +38,7 @@ function App() {
             path="/admin/add-book"
             element={authUser ? <AddBook /> : <Navigate to="/signup" />}
           />
+          <Route path="/wishlist" element={<Wishlist />} />
         </Routes>
         <Toaster />
       </div>

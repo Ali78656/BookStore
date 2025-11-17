@@ -5,14 +5,17 @@ import "./index.css";
 import { BrowserRouter } from "react-router-dom";
 import AuthProvider from "./context/AuthProvider.jsx";
 import CartProvider from "./context/CartProvider.jsx";
+import WishlistProvider from "./context/WishlistProvider.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <AuthProvider>
       <CartProvider>
-        <div className="dark:bg-slate-900 dark:text-white">
-          <App />
-        </div>
+        <WishlistProvider>
+          <div className="dark:bg-slate-900 dark:text-white">
+            <App />
+          </div>
+        </WishlistProvider>
       </CartProvider>
     </AuthProvider>
   </BrowserRouter>

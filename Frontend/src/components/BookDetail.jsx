@@ -5,6 +5,7 @@ import Navbar from "./Navbar";
 import Footer from "./Footer";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthProvider";
+import { useWishlist } from "../context/WishlistProvider";
 
 function BookDetail() {
   const { id } = useParams();
@@ -15,6 +16,7 @@ function BookDetail() {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [authUser] = useAuth();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
 
   const fetchBookDetails = async () => {
     try {
@@ -82,6 +84,17 @@ function BookDetail() {
     }
   };
 
+  const handleWishlistToggle = () => {
+    if (!book) return;
+    if (isInWishlist(book._id)) {
+      removeFromWishlist(book._id);
+      toast.success("Removed from wishlist");
+    } else {
+      addToWishlist(book);
+      toast.success("Added to wishlist");
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen dark:bg-slate-900 dark:text-white">
@@ -122,6 +135,12 @@ function BookDetail() {
         <p className="text-lg mb-2">
           <strong>Price:</strong> {book.price === 0 ? "Free" : `$${book.price}`}
         </p>
+        <button
+          className="btn bg-pink-500 text-white hover:bg-pink-600 mb-6"
+          onClick={handleWishlistToggle}
+        >
+          {isInWishlist(book._id) ? "Remove from Wishlist" : "Add to Wishlist"}
+        </button>
         <p className="text-lg mb-4">
           <strong>Title:</strong> {book.title}
         </p>

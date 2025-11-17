@@ -2,9 +2,13 @@ import React from "react";
 import { useCart } from "../context/CartProvider";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
+import { useWishlist } from "../context/WishlistProvider";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 
 function Cards({ item }) {
   const { addToCart } = useCart();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
+  const inWishlist = isInWishlist(item._id);
 
   const handleBuyNow = () => {
     addToCart(item);
@@ -14,6 +18,18 @@ function Cards({ item }) {
       toast.success(
         `Proceed to payment for ${item.name} (e.g., via Card, Visa, Master, etc.)`
       );
+    }
+  };
+
+  const handleWishlistToggle = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (inWishlist) {
+      removeFromWishlist(item._id);
+      toast.success("Removed from wishlist");
+    } else {
+      addToWishlist(item);
+      toast.success("Added to wishlist");
     }
   };
 
@@ -44,6 +60,19 @@ function Cards({ item }) {
                 >
                   Buy Now
                 </div>
+                <button
+                  className="btn btn-ghost btn-circle btn-sm"
+                  onClick={handleWishlistToggle}
+                  aria-label={
+                    inWishlist ? "Remove from wishlist" : "Add to wishlist"
+                  }
+                >
+                  {inWishlist ? (
+                    <FaHeart className="text-pink-500" />
+                  ) : (
+                    <FaRegHeart />
+                  )}
+                </button>
               </div>
             </div>
           </Link>

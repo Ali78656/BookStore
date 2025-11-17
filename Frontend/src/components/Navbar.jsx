@@ -6,6 +6,8 @@ import { useAuth } from "../context/AuthProvider";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartProvider";
 import Cart from "./Cart";
+import { useWishlist } from "../context/WishlistProvider";
+import { FaHeart } from "react-icons/fa";
 
 function Navbar() {
   const [authUser, setAuthUser] = useAuth();
@@ -39,28 +41,18 @@ function Navbar() {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
-  const navItems = (
-    <>
-      <li>
-        <a href="/">Home</a>
-      </li>
-      <li>
-        <a href="/course">Course</a>
-      </li>
-      <li>
-        <Link to="/contact">Contact</Link>
-      </li>
-      <li>
-        <Link to="/about">About</Link>
-      </li>
-      {authUser && (
-        <li>
-          <Link to="/admin/add-book">Admin Panel</Link>
-        </li>
-      )}
-    </>
-  );
+  const staticLinks = [
+    { to: "/", label: "Home" },
+    { to: "/course", label: "Course" },
+    { to: "/contact", label: "Contact" },
+    { to: "/about", label: "About" },
+  ];
+
+  const navLinks = authUser
+    ? [...staticLinks, { to: "/admin/add-book", label: "Admin" }]
+    : staticLinks;
   const { cart } = useCart();
+  const { wishlist } = useWishlist();
   return (
     <>
       <div
@@ -70,8 +62,8 @@ function Navbar() {
             : ""
         }`}
       >
-        <div className="navbar ">
-          <div className="navbar-start">
+        <div className="navbar flex-nowrap items-center gap-4">
+          <div className="navbar-start flex items-center gap-3">
             <div className="dropdown">
               <div
                 tabIndex={0}
@@ -97,17 +89,34 @@ function Navbar() {
                 tabIndex={0}
                 className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
               >
-                {navItems}
+                {navLinks.map((link) => (
+                  <li key={link.to}>
+                    <Link to={link.to}>{link.label}</Link>
+                  </li>
+                ))}
               </ul>
             </div>
-            <a className=" text-3xl font-bold cursor-pointer text-black dark:text-white">
+            <Link
+              to="/"
+              className=" text-3xl font-bold cursor-pointer text-black dark:text-white"
+            >
               bookStore
-            </a>
+            </Link>
           </div>
-          <div className="navbar-end space-x-3">
-            <div className="navbar-center hidden lg:flex">
-              <ul className="menu menu-horizontal px-1">{navItems}</ul>
-            </div>
+          <div className="navbar-center flex-1 justify-center hidden md:flex">
+            <nav className="flex items-center gap-8 text-base font-medium">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className="hover:text-pink-500 transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+          <div className="navbar-end flex items-center gap-3 justify-end">
             <div className="hidden md:block">
               <label className=" px-3 py-2 border rounded-md flex items-center gap-2">
                 <input
@@ -157,6 +166,25 @@ function Navbar() {
                 <path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z" />
               </svg>
             </label>
+
+            <Link
+              to="/wishlist"
+              className="btn btn-ghost btn-circle"
+              aria-label="View wishlist"
+            >
+              <div className="indicator">
+                <FaHeart
+                  className={`h-5 w-5 ${
+                    wishlist.length > 0 ? "text-pink-500" : ""
+                  }`}
+                />
+                {wishlist.length > 0 && (
+                  <span className="badge badge-sm indicator-item">
+                    {wishlist.length}
+                  </span>
+                )}
+              </div>
+            </Link>
 
             {authUser && (
               <div className="dropdown dropdown-end">
